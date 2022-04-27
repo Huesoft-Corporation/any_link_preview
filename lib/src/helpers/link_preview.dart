@@ -92,12 +92,18 @@ class AnyLinkPreview extends StatefulWidget {
   /// To disable, Pass empty function.
   final void Function()? onTap;
 
+  final double? heightHoriz;
+
+  final double? heightVert;
+
   AnyLinkPreview({
     Key? key,
     required this.link,
     this.cache = const Duration(days: 1),
     this.titleStyle,
     this.bodyStyle,
+    this.heightHoriz,
+    this.heightVert,
     this.displayDirection = uiDirection.uiDirectionVertical,
     this.showMultimedia = true,
     this.backgroundColor = const Color.fromRGBO(235, 235, 235, 1),
@@ -210,11 +216,11 @@ class _AnyLinkPreviewState extends State<AnyLinkPreview> {
   }
 
   void _launchURL(url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
     } else {
       try {
-        await launch(url);
+        await launchUrl(url);
       } catch (err) {
         throw Exception('Could not launch $url. Error: $err');
       }
@@ -290,11 +296,11 @@ class _AnyLinkPreviewState extends State<AnyLinkPreview> {
   @override
   Widget build(BuildContext context) {
     final info = _info as Metadata?;
-    var _height =
-        (widget.displayDirection == uiDirection.uiDirectionHorizontal ||
-                !widget.showMultimedia)
-            ? ((MediaQuery.of(context).size.height) * 0.15)
-            : ((MediaQuery.of(context).size.height) * 0.25);
+    var _height = (widget.displayDirection ==
+                uiDirection.uiDirectionHorizontal ||
+            !widget.showMultimedia)
+        ? widget.heightHoriz ?? ((MediaQuery.of(context).size.height) * 0.15)
+        : widget.heightVert ?? ((MediaQuery.of(context).size.height) * 0.25);
 
     Widget _loadingErrorWidget = Container(
       height: _height,
